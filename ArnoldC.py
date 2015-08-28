@@ -8,12 +8,8 @@ def evalLine(expr):
     if parsed[1] is None:
         parsed[0]
     else:
-        parsed[0](parsed[1])
+        parsed[0](evaluate(parsed[1]))
 
-def truth():
-    return
-def falsehood():
-    return
 def ifForm():
     return
 def elseForm():
@@ -64,8 +60,8 @@ def beginMain():
     return
 def endMain():
     return
-def printCommand():
-    return
+def printCommand(expr):
+    print(expr)
 def parseInteger():
     return
 def assignVariable():
@@ -74,12 +70,10 @@ def setValue():
     return
 def endVariableAssignment():
     return
-def ParseError():
-    return
+def parseError(name):
+    raise SyntaxError("WHAT THE FUCK DID I DO WRONG")
 
 commands = {
-    "I LIED": truth,
-    "NO PROBLEMO": falsehood,
     "BECAUSE I'M GOING TO SAY PLEASE": ifForm,
     "BULLSHIT": elseForm,
     "YOU HAVE NO RESPECT FOR LOGIC": endIfForm,
@@ -110,7 +104,6 @@ commands = {
     "GET TO THE CHOPPER": assignVariable,
     "HERE IS MY INVITATION": setValue,
     "ENOUGH TALK": endVariableAssignment,
-    "WHAT THE FUCK DID I DO WRONG": ParseError
 }
 
 _end = '_end_'
@@ -126,6 +119,8 @@ def make_trie(words):
 
 t = make_trie(commands.keys())
 
+defined_exprs = {"@I LIED": False, "@NO PROBLEMO": True}
+
 def parse(cmd):
     current_dict = t
     for i in range(len(cmd)):
@@ -134,7 +129,12 @@ def parse(cmd):
         if cmd[i] in current_dict:
             current_dict = current_dict[cmd[i]]
         else:
-            return False
+            parseError("Invalid input")
     if _end in current_dict:
         return current_dict[_end], None
-    return False
+    parseError("Invalid input")
+
+def evaluate(expr):
+    if expr in defined_exprs:
+        return defined_exprs[expr]
+    return expr
